@@ -5,7 +5,14 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets)
+# Try Qt6 first, fall back to Qt5
+find_package(Qt6 COMPONENTS Widgets QUIET)
+if(Qt6_FOUND)
+    set(QT_LIBS Qt6::Widgets)
+else()
+    find_package(Qt5 REQUIRED COMPONENTS Widgets)
+    set(QT_LIBS Qt5::Widgets)
+endif()
 
 add_executable(qlocate
     src/main.cpp
@@ -16,7 +23,7 @@ add_executable(qlocate
 )
 
 target_include_directories(qlocate PRIVATE third_party src)
-target_link_libraries(qlocate PRIVATE Qt5::Widgets)
+target_link_libraries(qlocate PRIVATE ${QT_LIBS})
 
 if(APPLE)
     target_link_libraries(qlocate PRIVATE "-framework CoreFoundation")

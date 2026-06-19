@@ -1,0 +1,132 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.5.3'
+
+      - name: Build
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(sysctl -n hw.ncpu)
+
+      - name: Package
+        run: |
+          cd build
+          mkdir -p dist/qlocate.app/Contents/MacOS
+          mkdir -p dist/qlocate.app/Contents/Resources
+          cp qlocate dist/qlocate.app/Contents/MacOS/
+          cat > dist/qlocate.app/Contents/Info.plist << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleExecutable</key><string>qlocate</string>
+            <key>CFBundleIdentifier</key><string>com.qlocate.app</string>
+            <key>CFBundleName</key><string>qlocate</string>
+            <key>CFBundlePackageType</key><string>APPL</string>
+            <key>NSHighResolutionCapable</key><true/>
+          </dict>
+          </plist>
+          EOF
+          macdeployqt dist/qlocate.app
+          hdiutil create -volname qlocate -srcfolder dist -ov -format UDZO dist/qlocate-macos.dmg
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qlocate-macos
+          path: build/dist/qlocate-macos.dmg
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '5.15.2'
+
+      - name: Build
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+
+      - name: Package
+        run: |
+          cd build
+          mkdir -p dist/qlocate-linux
+          cp qlocate dist/qlocate-linux/
+          cp ../src/qlocate.toml dist/qlocate-linux/qlocate.toml.example
+          cd dist
+          zip -r qlocate-linux.zip qlocate-linux
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qlocate-linux
+          path: build/dist/qlocate-linux.zip
+
+  build-windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '5.15.2'
+
+      - name: Build
+        shell: cmd
+        run: |
+          mkdir build && cd build
+          cmake ..
+          cmake --build . --config Release
+
+      - name: Package
+        shell: cmd
+        run: |
+          cd build
+          mkdir dist\qlocate-win
+          copy Release\qlocate.exe dist\qlocate-win\
+          copy ..\src\qlocate.toml dist\qlocate-win\qlocate.toml.example
+          windeployqt dist\qlocate-win\qlocate.exe
+          cd dist
+          tar -acf qlocate-win.zip qlocate-win
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qlocate-win
+          path: build/dist/qlocate-win.zip
+
+  release:
+    needs: [build-macos, build-linux, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/qlocate-macos/qlocate-macos.dmg
+            artifacts/qlocate-linux/qlocate-linux.zip
+            artifacts/qlocate-win/qlocate-win.zip
+          generate_release_notes: true
