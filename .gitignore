@@ -1,0 +1,12 @@
+.agents/
+.claude/
+.codex/
+.kiro/
+.trellis/
+AGENTS.md
+SomeFiles/
+*.rar
+build/
+build-*/
+.DS_Store
+

@@ -1,0 +1,13 @@
+# qlocate configuration file
+
+[settings]
+file_limit_interactive = 50
+file_limit_search = 2000
+
+[[database]]
+name = "main"
+filename = "~/.local/share/qlocate/main.idx"
+include_paths = ["/home/user/projects", "/home/user/Documents"]
+exclude_paths = []
+ignore_dirnames = ["node_modules", ".git", ".svn", "__pycache__", ".cache", "build", "dist"]
+default_update = true
