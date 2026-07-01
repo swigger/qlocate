@@ -18,10 +18,17 @@ private slots:
     void onSearch();
     void onUpdate();
     void onItemDoubleClicked(QListWidgetItem* item);
+    void onContextMenu(const QPoint& pos);
 
 private:
     void doSearch(const QString& pattern, int limit);
     void loadSearchers();
+    void revealInFileManager(const QString& path);
+#ifdef Q_OS_WIN
+    bool showWinShellMenu(const QString& fsPath, const QString& fullText,
+                          const QString& parentDir, const QString& fileName,
+                          const QPoint& globalPos);
+#endif
 
     AppConfig m_cfg;
     QLineEdit* m_edit;

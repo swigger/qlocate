@@ -28,3 +28,7 @@ target_link_libraries(qlocate PRIVATE ${QT_LIBS})
 if(APPLE)
     target_link_libraries(qlocate PRIVATE "-framework CoreFoundation")
 endif()
+
+if(WIN32)
+    target_link_libraries(qlocate PRIVATE shell32 ole32 user32)
+endif()
