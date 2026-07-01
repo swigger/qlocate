@@ -96,7 +96,8 @@ std::string Searcher::getFullPath(int idx)
         if (i == (int)stack.size() - 1) {
             result = r.name; // root is absolute path
         } else {
-            result += '/';
+            if (result.empty() || result.back() != '/')
+                result += '/';
             result += r.name;
         }
     }
@@ -126,7 +127,10 @@ bool Searcher::search(const std::string& pattern, SearchCallback cb, bool autoDe
             if (r.parpos == NOPARPOS) {
                 paths[i] = r.name;
             } else {
-                paths[i] = paths[r.parpos] + '/' + r.name;
+                paths[i] = paths[r.parpos];
+                if (!paths[i].empty() && paths[i].back() != '/')
+                    paths[i] += '/';
+                paths[i] += r.name;
             }
             if (!r.is_file) paths[i] += '/';
 

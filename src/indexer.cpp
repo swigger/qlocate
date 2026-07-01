@@ -104,6 +104,12 @@ bool createIndex(const DatabaseConfig& db, ProgressCallback progress)
         QString path = QString::fromUtf8(inc.c_str());
         while (path.endsWith('/') || path.endsWith('\\'))
             path.chop(1);
+#ifdef Q_OS_WIN
+        // On Windows, "D:" is drive-relative (current dir on D:), not the
+        // drive root. Restore the separator so "D:\" indexes the whole drive.
+        if (path.length() == 2 && path[1] == QLatin1Char(':'))
+            path.append(QLatin1Char('\\'));
+#endif
 
         QFileInfo rootInfo(path);
         DRecord rootRec;
