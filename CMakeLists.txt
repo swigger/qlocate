@@ -4,6 +4,7 @@ project(qlocate LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 # Try Qt6 first, fall back to Qt5
 find_package(Qt6 COMPONENTS Widgets QUIET)
@@ -20,7 +21,12 @@ add_executable(qlocate
     src/indexer.cpp
     src/searcher.cpp
     src/mainwindow.cpp
+    resources/qlocate.qrc
 )
+
+if(WIN32)
+    target_sources(qlocate PRIVATE resources/qlocate.rc)
+endif()
 
 target_include_directories(qlocate PRIVATE third_party src)
 target_link_libraries(qlocate PRIVATE ${QT_LIBS})

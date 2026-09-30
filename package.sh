@@ -35,6 +35,7 @@ case "$(uname -s)" in
         mkdir -p "$APP_BUNDLE/Contents/Resources"
 
         cp "$BUILD_DIR/$APP_NAME" "$APP_BUNDLE/Contents/MacOS/"
+        cp "$SCRIPT_DIR/resources/icon/$APP_NAME.icns" "$APP_BUNDLE/Contents/Resources/"
 
         cat > "$APP_BUNDLE/Contents/Info.plist" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -42,6 +43,8 @@ case "$(uname -s)" in
 <plist version="1.0">
 <dict>
     <key>CFBundleExecutable</key>
+    <string>$APP_NAME</string>
+    <key>CFBundleIconFile</key>
     <string>$APP_NAME</string>
     <key>CFBundleIdentifier</key>
     <string>com.qlocate.app</string>

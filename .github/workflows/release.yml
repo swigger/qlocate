@@ -28,12 +28,14 @@ jobs:
           mkdir -p dist/qlocate.app/Contents/MacOS
           mkdir -p dist/qlocate.app/Contents/Resources
           cp qlocate dist/qlocate.app/Contents/MacOS/
+          cp ../resources/icon/qlocate.icns dist/qlocate.app/Contents/Resources/
           cat > dist/qlocate.app/Contents/Info.plist << 'EOF'
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
           <dict>
             <key>CFBundleExecutable</key><string>qlocate</string>
+            <key>CFBundleIconFile</key><string>qlocate</string>
             <key>CFBundleIdentifier</key><string>com.qlocate.app</string>
             <key>CFBundleName</key><string>qlocate</string>
             <key>CFBundlePackageType</key><string>APPL</string>

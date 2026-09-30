@@ -1,0 +1,10 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <file>icon/qlocate.png</file>
+        <file>icon/qlocate_256.png</file>
+        <file>icon/qlocate_64.png</file>
+        <file>icon/qlocate_32.png</file>
+        <file>icon/qlocate_mac.png</file>
+    </qresource>
+</RCC>

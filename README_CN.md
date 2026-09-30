@@ -193,11 +193,30 @@ qlocate/
 │   ├── searcher.{h,cpp}    # 载入索引，通配符匹配
 │   ├── mainwindow.{h,cpp}  # Qt 图形界面
 │   └── qlocate.toml        # 示例配置
+├── resources/
+│   ├── qlocate.qrc         # 内嵌应用图标 PNG 的 Qt 资源
+│   ├── qlocate.rc          # Windows 可执行文件图标
+│   └── icon/               # 生成的图标集（含母版图）
+├── scripts/
+│   └── make_icons.py       # 从母版图重新生成图标集
 ├── third_party/
 │   └── toml.hpp            # 内置的 TOML 解析器（仅头文件）
 └── .github/workflows/
     └── release.yml         # CI 构建 + 发布流水线
 ```
+
+## 应用图标
+
+`resources/icon/` 下的图标集由母版图（`resources/icon/qlocate-source.png`）生成：
+脚本会把白色背景转为透明，并把图形裁切到紧贴边界。
+
+```bash
+python3 scripts/make_icons.py [新母版图.png]   # 需要 Pillow + numpy
+```
+
+产物：`qlocate.png`（1024 满幅）以及 256/64/32（用于 Qt 资源）、
+`qlocate_mac.png`（Apple 的 824/1024 内缩版，用于 Dock）、
+`qlocate.icns`（macOS 应用包，用 `iconutil` 生成）、`qlocate.ico`（Windows 可执行文件）。
 
 ## 索引格式
 

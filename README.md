@@ -203,11 +203,32 @@ qlocate/
 │   ├── searcher.{h,cpp}    # Loads index, wildcard matching
 │   ├── mainwindow.{h,cpp}  # Qt GUI
 │   └── qlocate.toml        # Example configuration
+├── resources/
+│   ├── qlocate.qrc         # Qt resource with the app icon PNGs
+│   ├── qlocate.rc          # Windows executable icon
+│   └── icon/               # Generated icon set (+ master artwork)
+├── scripts/
+│   └── make_icons.py       # Regenerates the icon set from the artwork
 ├── third_party/
 │   └── toml.hpp            # Vendored TOML parser (header-only)
 └── .github/workflows/
     └── release.yml         # CI build + release pipeline
 ```
+
+## Application icon
+
+The icon set under `resources/icon/` is generated from the master artwork
+(`resources/icon/qlocate-source.png`) — the white studio background is turned
+into transparency and the artwork is cropped flush:
+
+```bash
+python3 scripts/make_icons.py [new-artwork.png]   # needs Pillow + numpy
+```
+
+Outputs: `qlocate.png` (1024 full-bleed) plus 256/64/32 for the Qt resource,
+`qlocate_mac.png` (Apple's 824/1024 inset, used for the Dock),
+`qlocate.icns` (macOS bundle, built with `iconutil`) and `qlocate.ico`
+(Windows executable).
 
 ## Index format
 

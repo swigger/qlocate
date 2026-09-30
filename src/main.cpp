@@ -3,6 +3,7 @@
 #include "searcher.h"
 #include "mainwindow.h"
 #include <QApplication>
+#include <QIcon>
 #include <iostream>
 #include <cstring>
 
@@ -21,6 +22,21 @@ int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
     app.setApplicationName("qlocate");
+
+    // Window / taskbar / Dock icon.
+    // On macOS QGuiApplication::setWindowIcon replaces the Dock icon, so use the
+    // variant carrying Apple's 824/1024 inset to match neighbouring Dock icons.
+    // Bundled builds additionally ship the same artwork as Contents/Resources/
+    // qlocate.icns, which is what Finder shows.
+    QIcon icon;
+#ifdef Q_OS_MACOS
+    icon.addFile(QStringLiteral(":/icon/qlocate_mac.png"));
+#else
+    for (const char* res : {":/icon/qlocate_32.png", ":/icon/qlocate_64.png",
+                            ":/icon/qlocate_256.png", ":/icon/qlocate.png"})
+        icon.addFile(QString::fromLatin1(res));
+#endif
+    app.setWindowIcon(icon);
 
     // Parse args
     std::string configPath;
